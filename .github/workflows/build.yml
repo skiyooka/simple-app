@@ -1,0 +1,26 @@
+# To test locally install https://github.com/nektos/act
+# % act -j build-nextjs
+name: build simple-app
+on:
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-nextjs:
+    runs-on: ubuntu-latest
+    env:
+      COGNITO_REGION: ${{ secrets.COGNITO_REGION }}
+      COGNITO_AUTH_DOMAIN: ${{ secrets.COGNITO_AUTH_DOMAIN }}
+      COGNITO_USER_POOL_ID: ${{ secrets.COGNITO_USER_POOL_ID }}
+      COGNITO_CLIENT_ID: ${{ secrets.COGNITO_CLIENT_ID }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Use Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20.x'
+      - name: Build
+        run: |
+          npm ci
+          npm run build
+          npm run lint
