@@ -1,101 +1,258 @@
-import Image from "next/image";
+"use client";
+
+import { Authenticator, Button, Heading, Text, Image, useAuthenticator, useTheme, View } from "@aws-amplify/ui-react";
+import { Amplify } from "aws-amplify";
+
+Amplify.configure({
+  Auth: {
+    Cognito: {
+      // Amazon Cognito User Pool ID
+      userPoolId: process.env.NEXT_PUBLIC_COGNITO_USER_POOL_ID || '',
+      // OPTIONAL - Amazon Cognito Web Client ID (26-char alphanumeric string)
+      userPoolClientId: process.env.NEXT_PUBLIC_COGNITO_CLIENT_ID || '',
+      // REQUIRED only for Federated Authentication - Amazon Cognito Identity Pool ID
+      //identityPoolId: 'us-west-2:bc760eb6-XXXX-XXXX-XXXXXXXXX',
+    },
+  },
+});
+
+// copied from https://ui.docs.amplify.aws/react/connected-components/authenticator/customization
+const components = {
+  Header() {
+    const { tokens } = useTheme();
+
+    return (
+      <View textAlign="center" padding={tokens.space.large}>
+        <Image
+          alt="Amplify logo"
+          src="https://docs.amplify.aws/assets/logo-dark.svg"
+        />
+      </View>
+    );
+  },
+
+  Footer() {
+    const { tokens } = useTheme();
+
+    return (
+      <View textAlign="center" padding={tokens.space.large}>
+        <Text color={tokens.colors.neutral[80]}>
+          &copy; All Rights Reserved
+        </Text>
+      </View>
+    );
+  },
+
+  SignIn: {
+    Header() {
+      const { tokens } = useTheme();
+
+      return (
+        <Heading
+          padding={`${tokens.space.xl} 0 0 ${tokens.space.xl}`}
+          level={3}
+        >
+          Sign in to your account
+        </Heading>
+      );
+    },
+    Footer() {
+      const { toForgotPassword } = useAuthenticator();
+
+      return (
+        <View textAlign="center">
+          <Button
+            fontWeight="normal"
+            onClick={toForgotPassword}
+            size="small"
+            variation="link"
+          >
+            Reset Password
+          </Button>
+        </View>
+      );
+    },
+  },
+
+  SignUp: {
+    Header() {
+      const { tokens } = useTheme();
+
+      return (
+        <Heading
+          padding={`${tokens.space.xl} 0 0 ${tokens.space.xl}`}
+          level={3}
+        >
+          Create a new account
+        </Heading>
+      );
+    },
+    Footer() {
+      const { toSignIn } = useAuthenticator();
+
+      return (
+        <View textAlign="center">
+          <Button
+            fontWeight="normal"
+            onClick={toSignIn}
+            size="small"
+            variation="link"
+          >
+            Back to Sign In
+          </Button>
+        </View>
+      );
+    },
+  },
+  ConfirmSignUp: {
+    Header() {
+      const { tokens } = useTheme();
+      return (
+        <Heading
+          padding={`${tokens.space.xl} 0 0 ${tokens.space.xl}`}
+          level={3}
+        >
+          Enter Information:
+        </Heading>
+      );
+    },
+    Footer() {
+      return <Text>Footer Information</Text>;
+    },
+  },
+  SetupTotp: {
+    Header() {
+      const { tokens } = useTheme();
+      return (
+        <Heading
+          padding={`${tokens.space.xl} 0 0 ${tokens.space.xl}`}
+          level={3}
+        >
+          Enter Information:
+        </Heading>
+      );
+    },
+    Footer() {
+      return <Text>Footer Information</Text>;
+    },
+  },
+  ConfirmSignIn: {
+    Header() {
+      const { tokens } = useTheme();
+      return (
+        <Heading
+          padding={`${tokens.space.xl} 0 0 ${tokens.space.xl}`}
+          level={3}
+        >
+          Enter Information:
+        </Heading>
+      );
+    },
+    Footer() {
+      return <Text>Footer Information</Text>;
+    },
+  },
+  ForgotPassword: {
+    Header() {
+      const { tokens } = useTheme();
+      return (
+        <Heading
+          padding={`${tokens.space.xl} 0 0 ${tokens.space.xl}`}
+          level={3}
+        >
+          Enter Information:
+        </Heading>
+      );
+    },
+    Footer() {
+      return <Text>Footer Information</Text>;
+    },
+  },
+  ConfirmResetPassword: {
+    Header() {
+      const { tokens } = useTheme();
+      return (
+        <Heading
+          padding={`${tokens.space.xl} 0 0 ${tokens.space.xl}`}
+          level={3}
+        >
+          Enter Information:
+        </Heading>
+      );
+    },
+    Footer() {
+      return <Text>Footer Information</Text>;
+    },
+  },
+};
+
+const formFields = {
+  signIn: {
+    username: {
+      placeholder: 'Enter your email',
+    },
+  },
+  signUp: {
+    password: {
+      label: 'Password:',
+      placeholder: 'Enter your Password:',
+      isRequired: false,
+      order: 2,
+    },
+    confirm_password: {
+      label: 'Confirm Password:',
+      order: 1,
+    },
+  },
+  forceNewPassword: {
+    password: {
+      placeholder: 'Enter your Password:',
+    },
+  },
+  forgotPassword: {
+    username: {
+      placeholder: 'Enter your email:',
+    },
+  },
+  confirmResetPassword: {
+    confirmation_code: {
+      placeholder: 'Enter your Confirmation Code:',
+      label: 'New Label',
+      isRequired: false,
+    },
+    confirm_password: {
+      placeholder: 'Enter your Password Please:',
+    },
+  },
+  setupTotp: {
+    QR: {
+      totpIssuer: 'test issuer',
+      totpUsername: 'amplify_qr_test_user',
+    },
+    confirmation_code: {
+      label: 'New Label',
+      placeholder: 'Enter your Confirmation Code:',
+      isRequired: false,
+    },
+  },
+  confirmSignIn: {
+    confirmation_code: {
+      label: 'New Label',
+      placeholder: 'Enter your Confirmation Code:',
+      isRequired: false,
+    },
+  },
+};
 
 export default function Home() {
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
-
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
+    <Authenticator formFields={formFields} components={components}>
+      {({ signOut, user }) => (
+        <main>
+          <h1>Hello {user?.username}</h1>
+          <button onClick={signOut}>Sign out</button>
+        </main>
+      )}
+    </Authenticator>
   );
 }
